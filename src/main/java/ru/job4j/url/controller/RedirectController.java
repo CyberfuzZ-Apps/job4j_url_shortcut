@@ -1,5 +1,6 @@
 package ru.job4j.url.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,21 +35,13 @@ public class RedirectController {
     }
 
     @GetMapping("/{code}")
-    public ResponseEntity<String> redirect(@PathVariable String code) {
+    public void redirect(@PathVariable String code,
+                                         HttpServletResponse response) {
         UrlModel urlModel = urlService.findByCode(code);
         if (urlModel == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ссылка не найдена");
         }
-        /*
-        String address = service.getAddress(code);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", address);
-        return new ResponseEntity<>(
-                headers,
-                HttpStatus.MOVED_PERMANENTLY
-        );
-
-        можно попробовать еще с HttpServletResponse response добавить header
-         */
+        response.addHeader("REDIRECT", urlModel.getUrl());
+        response.setStatus(302);
     }
 }

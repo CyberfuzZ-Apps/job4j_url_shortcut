@@ -26,7 +26,8 @@ import static ru.job4j.url.filter.JWTAuthenticationFilter.SIGN_UP_URL;
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-    private static final String REDIRECT = "/redirect";
+    private static final String REDIRECT = "/redirect/**";
+    private static final String LOGIN = "/login";
 
     private final UserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -40,8 +41,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .antMatchers(HttpMethod.GET, REDIRECT).permitAll()
+                .antMatchers(SIGN_UP_URL, REDIRECT, LOGIN).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
