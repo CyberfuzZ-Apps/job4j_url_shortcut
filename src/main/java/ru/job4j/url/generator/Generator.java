@@ -36,4 +36,33 @@ public class Generator {
         return stringBuilder.toString();
     }
 
+    public static String generateShortUrl(String longUrl) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int code = Math.abs(longUrl.hashCode());
+        int numsOfChars = 62;
+        int tmp = 0;
+        while (code >= numsOfChars) {
+            tmp = code % numsOfChars;
+            tmp = getNumberForChar(tmp);
+            stringBuilder.append((char) tmp);
+            code /= numsOfChars;
+        }
+        code = getNumberForChar(code);
+        stringBuilder.append((char) code);
+        return stringBuilder.toString();
+    }
+
+    private static int getNumberForChar(int tmp) {
+        if (tmp >= 0 && tmp <= 9) {
+            tmp += 48;
+        } else if (tmp > 9 && tmp <= 16) {
+            tmp += 55;
+        } else if (tmp > 16 && tmp <= 35) {
+            tmp += 48;
+        } else {
+            tmp += 61;
+        }
+        return tmp;
+    }
+
 }
