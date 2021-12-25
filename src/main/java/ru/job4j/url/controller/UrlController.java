@@ -3,14 +3,17 @@ package ru.job4j.url.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.job4j.url.generator.Generator;
+import ru.job4j.url.model.StatisticModel;
 import ru.job4j.url.model.UrlModel;
 import ru.job4j.url.service.SiteService;
 import ru.job4j.url.service.UrlService;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Класс UrlController
@@ -39,11 +42,7 @@ public class UrlController {
                     HttpStatus.OK
             );
         }
-        Object principal = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        int siteId = siteService.findByLogin((String) principal).getId();
+        int siteId = getSiteId();
         urlModel.setSiteId(siteId);
         String code = Generator.generateShortUrl(urlModel.getUrl());
         UrlModel collisionUrl = urlService.findByCode(code);
@@ -58,5 +57,29 @@ public class UrlController {
                 savedUrlModel,
                 HttpStatus.CREATED
         );
+    }
+
+    @GetMapping("/statistic")
+    public ResponseEntity<List<StatisticModel>> getStatistic() {
+        List<UrlModel> allUrlsBySiteId = urlService.findAllBySiteId(getSiteId());
+        List<StatisticModel> statisticModels = new ArrayList<>(allUrlsBySiteId.size());
+        for (UrlModel url : allUrlsBySiteId) {
+            statisticModels.add(new StatisticModel(
+                    url.getUrl(),
+                    url.getTotal()
+            ));
+        }
+        return new ResponseEntity<>(
+                statisticModels,
+                HttpStatus.OK
+        );
+    }
+
+    private int getSiteId() {
+        Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return siteService.findByLogin((String) principal).getId();
     }
 }

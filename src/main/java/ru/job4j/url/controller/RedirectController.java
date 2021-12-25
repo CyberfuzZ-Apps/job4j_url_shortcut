@@ -41,6 +41,7 @@ public class RedirectController {
         if (urlModel == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ссылка не найдена");
         }
+        urlService.incrementTotal(urlModel.getId());
         response.addHeader("REDIRECT", urlModel.getUrl());
         response.setStatus(302);
     }

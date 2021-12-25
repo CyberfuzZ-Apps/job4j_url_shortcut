@@ -19,6 +19,7 @@ public class UrlModel {
     private String url;
     private String code;
     private int siteId;
+    private int total;
 
     public int getId() {
         return id;
@@ -50,6 +51,14 @@ public class UrlModel {
 
     public void setSiteId(int siteId) {
         this.siteId = siteId;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 
     @Override

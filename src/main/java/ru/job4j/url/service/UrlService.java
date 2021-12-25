@@ -36,4 +36,8 @@ public class UrlService {
     public UrlModel save(UrlModel urlModel) {
         return urlRepository.save(urlModel);
     }
+
+    public void incrementTotal(int id) {
+        urlRepository.incrementTotal(id);
+    }
 }
